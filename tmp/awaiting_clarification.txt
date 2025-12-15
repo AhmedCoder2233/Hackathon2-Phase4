@@ -1,0 +1,41 @@
+## Question 1: Performance Target for Database Query
+
+**Context**: 
+```
+SC-003: User retrieval from the database based on email completes within [NEEDS CLARIFICATION: performance target for DB query?] milliseconds for 99% of requests.
+```
+
+**What we need to know**: What is the desired performance target (in milliseconds) for retrieving user information from the database based on their email, for 99% of requests?
+
+**Suggested Answers**:
+
+| Option | Answer | Implications |
+|--------|--------|--------------|
+| A      | 100ms  | Standard performance expectation for most web applications. Good user experience. |
+| B      | 200ms  | Acceptable performance, might be noticeable under heavy load but generally fine. |
+| C      | 50ms   | High-performance target, potentially requiring more optimization efforts. |
+| Custom | Provide your own value (e.g., "75ms") | Allows for a specific target based on project needs. |
+
+**Your choice**: _[Wait for user response]_
+
+---
+
+## Question 2: Logging Retention and Accessibility
+
+**Context**: 
+```
+SC-006: [NEEDS CLARIFICATION: What is the logging retention period and accessibility for security monitoring?]
+```
+
+**What we need to know**: What is the required retention period for authentication-related logs, and who (or which systems) should have access to these logs for security monitoring?
+
+**Suggested Answers**:
+
+| Option | Answer | Implications |
+|--------|--------|--------------|
+| A      | 30 days retention, accessible by Security Team via centralized logging system. | Common practice for auditing and incident response. |
+| B      | 90 days retention, accessible by Security Team and DevOps via centralized logging system. | Increased historical data for deeper analysis, broader access for operational troubleshooting. |
+| C      | 1 year retention, accessible by Security Team, DevOps, and Audit team via centralized logging system. | Compliance-driven, provides extensive historical data, involves more stakeholders. |
+| Custom | Provide your own specifics (e.g., "6 months retention, accessible by Security and Compliance via ELK stack") | Allows for specific organizational policies. |
+
+**Your choice**: _[Wait for user response]_

@@ -1,0 +1,91 @@
+# API Contract for Better Auth Setup
+
+This document describes the API endpoints exposed by the Better Auth setup for authentication.
+
+**Note**: The API endpoints and their contracts are managed and exposed by the `better-auth/next-js` library. This integration leverages the library's built-in routes for user authentication (signup, login, logout, session management).
+
+## Endpoints provided by `better-auth/next-js`
+
+The `better-auth/next-js` library dynamically handles the following API routes under `app/api/auth/[...all]/route.ts`:
+
+### `POST /api/auth/email/signup`
+
+- **Description**: Registers a new user with an email, password, and optional name.
+- **Request Body**:
+  ```json
+  {
+    "email": "string",
+    "password": "string",
+    "name": "string (optional)"
+  }
+  ```
+- **Response**: Upon successful signup, creates a new user and session, returning user and session data.
+  - Success (200 OK):
+    ```json
+    {
+      "user": {
+        "id": "string",
+        "email": "string",
+        "name": "string | null",
+        "emailVerified": "boolean | null",
+        "image": "string | null",
+        "createdAt": "string (ISO Date)",
+        "updatedAt": "string (ISO Date)"
+      },
+      "session": {
+        "userId": "string",
+        "expires": "string (ISO Date)",
+        "sessionToken": "string"
+      }
+    }
+    ```
+  - Error (4xx/5xx):
+    ```json
+    {
+      "error": "string",
+      "message": "string"
+    }
+    ```
+
+### `POST /api/auth/email/login`
+
+- **Description**: Authenticates an existing user with email and password.
+- **Request Body**:
+  ```json
+  {
+    "email": "string",
+    "password": "string"
+  }
+  ```
+- **Response**: Upon successful login, creates a new session and returns user and session data.
+  - Success (200 OK): Same as signup success response.
+  - Error (4xx/5xx): Same as signup error response.
+
+### `GET /api/auth/session`
+
+- **Description**: Retrieves the current user's session information.
+- **Response**:
+  - Success (200 OK): Returns user and session data if authenticated.
+    ```json
+    {
+      "user": { ... }, // User object if session is valid
+      "session": { ... } // Session object if session is valid
+    }
+    ```
+  - Error (401 Unauthorized): If no valid session.
+
+### `POST /api/auth/logout`
+
+- **Description**: Terminates the current user's session.
+- **Request Body**: None.
+- **Response**:
+  - Success (200 OK):
+    ```json
+    {
+      "message": "Logged out successfully"
+    }
+    ```
+  - Error (4xx/5xx): If session termination fails.
+
+---
+**Note**: This is a simplified representation. The actual responses and available endpoints might be more extensive based on the `better-auth` configuration and version. This document focuses on the primary authentication flows identified in the feature specification.

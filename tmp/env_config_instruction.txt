@@ -1,0 +1,1 @@
+Please configure the `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_ISSUER` environment variables in the `backend/.env` file. Replace placeholders with your actual database connection string, Better Auth secret key, and (optional) Better Auth issuer. Once configured, type 'continue' to proceed.

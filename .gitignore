@@ -1,0 +1,41 @@
+# Git ignore for Node.js / Next.js project
+node_modules/
+.next/
+out/
+build/
+dist/
+*.log
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# Universal ignores
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+
+# OS specific (from git root context)
+target/
+
+# Package manager lock files (optional, depends on preference)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Compiled output
+*.js
+*.map
+coverage/
+
+# Python specific ignores
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+*.egg-info/
+

@@ -1,0 +1,18 @@
+# NPM ignore for Next.js project
+node_modules/
+.git/
+.gitignore
+.DS_Store
+npm-debug.log
+*.swp
+*.bak
+*.orig
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Next.js build artifacts
+.next/
+out/
+build/
+dist/
