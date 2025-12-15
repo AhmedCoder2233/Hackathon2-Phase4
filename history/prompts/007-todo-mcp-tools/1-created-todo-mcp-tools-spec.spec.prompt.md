@@ -1,0 +1,44 @@
+---
+id: 1
+title: created-todo-mcp-tools-spec
+stage: spec
+date: 2025-12-15
+surface: agent
+model: gemini-pro
+feature: 007-todo-mcp-tools
+branch: 007-todo-mcp-tools
+user: Ahmed
+command: /sp.specify # SpecKit Input: Todo MCP Tools Implementation ## Task Create `backend/app/mcp_tools.py` file with FastMCP todo management tools that connect to database. ## Requirements ### 1. Add Task Model to `database.py` ```python class Task(SQLModel, table=True): __tablename__ = "task" id: Optional[int] = Field(default=None, primary_key=True) user_id: str = Field(index=True) title: str description: Optional[str] = None completed: bool = Field(default=False) created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) ``` ### 2. Create `backend/app/mcp_tools.py` **Import FastMCP and database:** ```python from fastmcp import FastMCP from sqlmodel import Session, select from app.database import Task, get_session, engine ``` **Create FastMCP instance:** ```python mcp = FastMCP("Todo Tools") ``` **Implement 5 tools:** #### Tool 1: add_task ```python @mcp.tool() def add_task(user_id: str, title: str, description: str = "") -> dict: """Create a new task""" with Session(engine) as session: task = Task(user_id=user_id, title=title, description=description) session.add(task) session.commit() session.refresh(task) return {"task_id": task.id, "status": "created", "title": task.title} ``` #### Tool 2: list_tasks ```python @mcp.tool() def list_tasks(user_id: str, status: str = "all") -> dict: """List user's tasks. Status: all, pending, or completed""" with Session(engine) as session: query = select(Task).where(Task.user_id == user_id) if status == "pending": query = query.where(Task.completed == False) elif status == "completed": query = query.where(Task.completed == True) tasks = session.exec(query).all() return { "tasks": [ { "id": t.id, "title": t.title, "description": t.description, "completed": t.completed, "created_at": t.created_at.isoformat() } for t in tasks ] } ``` #### Tool 3: complete_task ```python @mcp.tool() def complete_task(user_id: str, task_id: int) -> dict: """Mark task as completed""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") task.completed = True task.updated_at = datetime.now(timezone.utc) session.add(task) session.commit() return {"task_id": task.id, "status": "completed", "title": task.title} ``` #### Tool 4: delete_task ```python @mcp.tool() def delete_task(user_id: str, task_id: int) -> dict: """Delete a task""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") title = task.title session.delete(task) session.commit() return {"task_id": task_id, "status": "deleted", "title": title} ``` #### Tool 5: update_task ```python @mcp.tool() def update_task(user_id: str, task_id: int, title: str = None, description: str = None) -> dict: """Update task title or description""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") if title: task.title = title if description is not None: task.description = description task.updated_at = datetime.now(timezone.utc) session.add(task) session.commit() return {"task_id": task.id, "status": "updated", "title": task.title} ``` ## That's It! - Add Task model to `database.py` - Create `mcp_tools.py` with 5 tools - All tools connect to database using existing `engine` and `Session`
+labels: ["feature-specification"]
+links:
+  spec: null
+  ticket: null
+  adr: null
+  pr: null
+files:
+- specs/007-todo-mcp-tools/spec.md
+- specs/007-todo-mcp-tools/checklists/requirements.md
+tests:
+
+## Prompt
+
+# SpecKit Input: Todo MCP Tools Implementation ## Task Create `backend/app/mcp_tools.py` file with FastMCP todo management tools that connect to database. ## Requirements ### 1. Add Task Model to `database.py` ```python class Task(SQLModel, table=True): __tablename__ = "task" id: Optional[int] = Field(default=None, primary_key=True) user_id: str = Field(index=True) title: str description: Optional[str] = None completed: bool = Field(default=False) created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc)) ``` ### 2. Create `backend/app/mcp_tools.py` **Import FastMCP and database:** ```python from fastmcp import FastMCP from sqlmodel import Session, select from app.database import Task, get_session, engine ``` **Create FastMCP instance:** ```python mcp = FastMCP("Todo Tools") ``` **Implement 5 tools:** #### Tool 1: add_task ```python @mcp.tool() def add_task(user_id: str, title: str, description: str = "") -> dict: """Create a new task""" with Session(engine) as session: task = Task(user_id=user_id, title=title, description=description) session.add(task) session.commit() session.refresh(task) return {"task_id": task.id, "status": "created", "title": task.title} ``` #### Tool 2: list_tasks ```python @mcp.tool() def list_tasks(user_id: str, status: str = "all") -> dict: """List user's tasks. Status: all, pending, or completed""" with Session(engine) as session: query = select(Task).where(Task.user_id == user_id) if status == "pending": query = query.where(Task.completed == False) elif status == "completed": query = query.where(Task.completed == True) tasks = session.exec(query).all() return { "tasks": [ { "id": t.id, "title": t.title, "description": t.description, "completed": t.completed, "created_at": t.created_at.isoformat() } for t in tasks ] } ``` #### Tool 3: complete_task ```python @mcp.tool() def complete_task(user_id: str, task_id: int) -> dict: """Mark task as completed""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") task.completed = True task.updated_at = datetime.now(timezone.utc) session.add(task) session.commit() return {"task_id": task.id, "status": "completed", "title": task.title} ``` #### Tool 4: delete_task ```python @mcp.tool() def delete_task(user_id: str, task_id: int) -> dict: """Delete a task""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") title = task.title session.delete(task) session.commit() return {"task_id": task_id, "status": "deleted", "title": title} ``` #### Tool 5: update_task ```python @mcp.tool() def update_task(user_id: str, task_id: int, title: str = None, description: str = None) -> dict: """Update task title or description""" with Session(engine) as session: task = session.exec( select(Task).where(Task.id == task_id, Task.user_id == user_id) ).first() if not task: raise ValueError(f"Task {task_id} not found") if title: task.title = title if description is not None: task.description = description task.updated_at = datetime.now(timezone.utc) session.add(task) session.commit() return {"task_id": task.id, "status": "updated", "title": task.title} ``` ## That's It! - Add Task model to `database.py` - Create `mcp_tools.py` with 5 tools - All tools connect to database using existing `engine` and `Session`
+
+## Response snapshot
+
+Feature specification for 'Todo MCP Tools Implementation' created in `specs/007-todo-mcp-tools/spec.md` and validated with `specs/007-todo-mcp-tools/checklists/requirements.md`.
+
+## Outcome
+
+- ✅ Impact: Feature specification for 'Todo MCP Tools Implementation' successfully created and validated.
+- 🧪 Tests: N/A (Specification creation, no code changes to test)
+- 📁 Files: Created `specs/007-todo-mcp-tools/spec.md` and `specs/007-todo-mcp-tools/checklists/requirements.md`.
+- 🔁 Next prompts: `/sp.plan` to generate a plan based on the created spec.
+- 🧠 Reflection: Encountered significant challenges with `run_shell_command` and PowerShell argument parsing for complex multi-line strings, requiring a manual workflow to create spec files.
+
+## Evaluation notes (flywheel)
+
+- Failure modes observed: `run_shell_command` unable to safely parse complex multi-line strings with special characters for PowerShell script arguments.
+- Graders run and results (PASS/FAIL): N/A
+- Prompt variant (if applicable): N/A
+- Next experiment (smallest change to try): Investigate robust ways to pass complex multi-line string arguments to PowerShell scripts via `run_shell_command`, potentially involving temporary files or alternative encoding.

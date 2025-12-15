@@ -3,11 +3,12 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict
 
-from agents import Agent, RunContextWrapper, StopAtTools, function_tool
+from agents import Agent, RunContextWrapper, StopAtTools, function_tool, tool
 from chatkit.agents import AgentContext
 from chatkit.types import AssistantMessageContent, AssistantMessageItem, ThreadItemDoneEvent
 
 from .airline_state import AirlineStateManager
+from .mcp_tools import mcp as todo_mcp_tools
 from dotenv import load_dotenv
 
 load_dotenv()

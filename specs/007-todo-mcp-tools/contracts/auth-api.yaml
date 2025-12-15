@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: Todo MCP Tools API
+  version: 1.0.0
+  description: API for managing Todo tasks via MCP tools.
+
+paths: {}
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the task.
+          readOnly: true
+        user_id:
+          type: string
+          description: ID of the user who owns the task.
+        title:
+          type: string
+          description: Title of the task.
+        description:
+          type: string
+          nullable: true
+          description: Optional detailed description of the task.
+        completed:
+          type: boolean
+          description: Indicates if the task is completed.
+          default: false
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the task was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the task was last updated.
+      required:
+        - user_id
+        - title
+
+  x-fastmcp-tools:
+    add_task:
+      name: add_task
+      description: Create a new task.
+      parameters:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: The ID of the user creating the task.
+          title:
+            type: string
+            description: The title of the task.
+          description:
+            type: string
+            nullable: true
+            description: An optional detailed description of the task.
+        required:
+          - user_id
+          - title
+      returns:
+        type: object
+        properties:
+          task_id:
+            type: integer
+          status:
+            type: string
+          title:
+            type: string
+    list_tasks:
+      name: list_tasks
+      description: List user's tasks.
+      parameters:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: The ID of the user whose tasks to list.
+          status:
+            type: string
+            enum: [all, pending, completed]
+            default: all
+            description: Filter tasks by status.
+        required:
+          - user_id
+      returns:
+        type: object
+        properties:
+          tasks:
+            type: array
+            items:
+              $ref: '#/components/schemas/Task'
+    complete_task:
+      name: complete_task
+      description: Mark a task as completed.
+      parameters:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: The ID of the user completing the task.
+          task_id:
+            type: integer
+            description: The ID of the task to complete.
+        required:
+          - user_id
+          - task_id
+      returns:
+        type: object
+        properties:
+          task_id:
+            type: integer
+          status:
+            type: string
+          title:
+            type: string
+    delete_task:
+      name: delete_task
+      description: Delete a task.
+      parameters:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: The ID of the user deleting the task.
+          task_id:
+            type: integer
+            description: The ID of the task to delete.
+        required:
+          - user_id
+          - task_id
+      returns:
+        type: object
+        properties:
+          task_id:
+            type: integer
+          status:
+            type: string
+          title:
+            type: string
+    update_task:
+      name: update_task
+      description: Update task title or description.
+      parameters:
+        type: object
+        properties:
+          user_id:
+            type: string
+            description: The ID of the user updating the task.
+          task_id:
+            type: integer
+            description: The ID of the task to update.
+          title:
+            type: string
+            nullable: true
+            description: The new title for the task.
+          description:
+            type: string
+            nullable: true
+            description: The new detailed description for the task.
+        required:
+          - user_id
+          - task_id
+      returns:
+        type: object
+        properties:
+          task_id:
+            type: integer
+          status:
+            type: string
+          title:
+            type: string

@@ -45,6 +45,17 @@ class ChatMessage(SQLModel, table=True):
     createdAt: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+class Task(SQLModel, table=True):
+    __tablename__ = "task"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: str = Field(index=True)
+    title: str
+    description: Optional[str] = None
+    completed: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
