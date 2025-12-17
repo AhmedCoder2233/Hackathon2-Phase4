@@ -15,7 +15,7 @@ export default function ChatKitPanel({
 
  const chatkit = useChatKit({
   api: {
-    url: 'http://localhost:8000/support/chatkit',
+    url: 'http://127.0.0.1:8000/support/chatkit',
     domainKey: 'localdev',
     
     // ✅ FETCH FUNCTION PROPERLY ADD KARO

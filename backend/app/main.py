@@ -43,6 +43,7 @@ from .airline_state import AirlineStateManager, CustomerProfile
 from .memory_store import MemoryStore
 from .support_agent import state_manager, support_agent
 from .thread_item_converter import CustomerSupportThreadItemConverter
+from .support_agent import create_todo_agent
 
 DEFAULT_THREAD_ID = "demo_default_thread"
 logger = logging.getLogger(__name__)
@@ -119,13 +120,22 @@ class CustomerSupportServer(ChatKitServer[dict[str, Any]]):
             input_items = converted_items
             print(f"📤 Sending to agent: {len(converted_items)} thread messages")
 
+        # GET USER ID FROM CONTEXT
+        current_user = context.get("current_user")
+        user_id = current_user.id # This is Better Auth user ID
+        print(f"🆔 User ID for MCP tools: {user_id}")
+
+        # Create agent with user_id
+        todo_agent, mcp_client = await create_todo_agent(user_id)
+        print(f"✅ Todo agent created for user: {user_id}")
+
         agent_context = AgentContext(
             thread=thread,
             store=self.store,
             request_context=context,
         )
         result = Runner.run_streamed(
-            self.agent,
+            todo_agent, # Use todo_agent instead of self.agent
             input_items,
             context=agent_context,
             run_config=RunConfig(model_settings=ModelSettings(temperature=0.4)),
@@ -133,6 +143,7 @@ class CustomerSupportServer(ChatKitServer[dict[str, Any]]):
 
         async for event in stream_agent_response(agent_context, result):
             yield event
+        
 
     async def _load_full_thread(self, thread_id: str, context: dict[str, Any]):
         from chatkit.types import Thread
@@ -158,27 +169,12 @@ app = FastAPI(title="ChatKit Customer Support API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000", 
-    ],
+        "*"],
     allow_credentials=True,
     allow_methods=["*"],  
     allow_headers=["*"],
     expose_headers=["*"], 
 )
-
-
-@app.on_event("startup")
-async def on_startup():
-    """Initialize database tables on application startup"""
-    print("🚀 Creating database tables...")
-    try:
-        create_db_and_tables()
-        print("✅ Database tables created successfully!")
-    except Exception as e:
-        print(f"❌ Error creating database tables: {e}")
-        import traceback
-        traceback.print_exc()
 
 
 def get_server() -> CustomerSupportServer:
@@ -301,12 +297,6 @@ async def get_current_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={"error": "An unexpected error occurred during authentication", "status": 500},
         )
-
-
-@app.options("/support/chatkit")
-async def chatkit_options():
-    return Response(status_code=200)
-
 
 @app.post("/support/chatkit")
 async def chatkit_endpoint(

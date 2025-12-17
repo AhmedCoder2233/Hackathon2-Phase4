@@ -8,6 +8,7 @@ dependencies = [
     "chatkit>=0.0.1",
     "dotenv>=0.9.9",
     "fastapi[standard]>=0.124.4",
+    "fastmcp>=2.14.1",
     "openai-agents>=0.6.3",
     "openai-chatkit>=1.4.0",
     "psycopg2>=2.9.11",

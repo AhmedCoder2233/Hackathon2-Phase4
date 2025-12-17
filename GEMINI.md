@@ -208,3 +208,18 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+### Testing the MCP Client Integration
+**Start MCP Server:**
+```bash
+cd backend/app
+python mcp_tools.py
+```
+**Start FastAPI:**
+```bash
+uvicorn app.main:app --reload
+```
+**Test via ChatKit:**
+- "Add task to buy milk" → Should call add_task with your user_id
+- "Show my tasks" → Should call list_tasks with your user_id
+- "Mark task 1 as done" → Should call complete_task with your user_id
