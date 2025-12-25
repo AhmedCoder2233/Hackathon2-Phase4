@@ -517,3 +517,7 @@ async def customer_snapshot(
 @app.get("/support/health")
 async def health_check() -> dict[str, str]:
     return {"status": "healthy"}
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello from Chatbot!"}
