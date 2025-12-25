@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node.js (from frontend)
+frontend/node_modules
+frontend/.next/
+npm-debug.log
+yarn-error.log
+
+# Logs and environment files
+*.log
+.env*
